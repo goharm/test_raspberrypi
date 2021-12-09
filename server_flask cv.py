@@ -1,25 +1,47 @@
 
-from flask import Flask
+import threading
+from flask import Flask, Response
+
+video_frame = ''
+
 
 app = Flask(__name__)
-
 @app.route("/")
 
-def helloworld():
+def helloworld() :
     str = "Hello World!"
     return str
 
 import cv2 as cv
+def encodeframe() :
+    global video_frame
+    while True :
+        ret, encoded_image = cv.imencode('.jpg', video_frame, )
+        yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encoded_image) + b'\r\n')
+    return 
 
-if __name__ == '__main__' : 
-    app.run(host='0.0.0.0', port='8080')
+
+@app.route('/streaming')
+def streamframe() : 
+    return Response(encodeframe(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
-
-    # /dev/video0  /dev/video1
-    cap = cv.VideoCapture(1)
+def captureframe() :
+    global video_frame
+    cap = cv.VideoCapture(0)
     while cap.isOpened():
         ret, frame = cap.read()
         cv.imshow('webcam', frame)
-        cv.waitKey(1)
+        video_frame = frame.copy()
+        cv.waitKey(15)
         pass
+
+if __name__ == '__main__' : 
+    
+    # /dev/video0  /dev/video1
+    cap_thread = threading.Thread(target=captureframe)
+    cap_thread.daemon = True    
+    cap_thread.start()
+
+    app.run(host='0.0.0.0', port='8080')
+    pass
