@@ -4,7 +4,6 @@ from flask import Flask, Response
 
 video_frame = ''
 
-
 app = Flask(__name__)
 @app.route("/")
 
@@ -13,6 +12,7 @@ def helloworld() :
     return str
 
 import cv2 as cv
+
 def encodeframe() :
     global video_frame
     while True :
@@ -32,6 +32,9 @@ def captureframe() :
     while cap.isOpened():
         ret, frame = cap.read()
         cv.imshow('webcam', frame)
+        ##################
+        #화면이 뒤집혔다면 두번째 파라미터가 각도
+        #frame = cv.rotate(frame, cv.ROTATE_180)
         video_frame = frame.copy()
         cv.waitKey(15)
         pass
