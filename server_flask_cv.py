@@ -29,6 +29,8 @@ def encodeframe() :
     return 
 
 
+
+
 @app.route('/streaming')
 def streamframe() : 
     return Response(encodeframe(), mimetype="multipart/x-mixed-replace; boundary=frame")
@@ -50,6 +52,7 @@ def captureframe() :
 if __name__ == '__main__' : 
     
     # /dev/video0  /dev/video1
+    # thread 실행 (target = 메소드 이름, args = 파라미터)
     cap_thread = threading.Thread(target=captureframe)
     cap_thread.daemon = True    
     cap_thread.start()
