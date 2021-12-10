@@ -11,6 +11,14 @@ def helloworld() :
     str = "Hello World!"
     return str
 
+
+# need install for opencv on raspbi :
+# ~$ sudo apt-get install -y libatlas-base-dev
+# ~$ python -m pip install -U pip
+# ~$ python -m pip install -U numpy 
+
+
+
 import cv2 as cv
 
 def encodeframe() :
